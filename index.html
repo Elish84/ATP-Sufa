@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ATP SUFA</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Ctext y=%2748%27 font-size=%2748%27%3E%F0%9F%9A%81%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <section id="loginScreen" class="card auth-card glass">
+      <div class="auth-header">
+        <span class="auth-icon">🚀</span>
+        <h1>ATP SUFA</h1>
+        <p class="muted">כניסה למערכת באמצעות אימייל וסיסמה</p>
+      </div>
+      <div class="grid two">
+        <label>
+          <span>אימייל</span>
+          <input id="loginEmail" type="email" placeholder="name@example.com" autocomplete="email" />
+        </label>
+        <label>
+          <span>סיסמה</span>
+          <input id="loginPassword" type="password" placeholder="••••••••" autocomplete="current-password" />
+        </label>
+      </div>
+      <div class="actions center-actions">
+        <button id="loginBtn" class="primary pulse-hover">כניסה לחשבון</button>
+        <button id="registerBtn" class="secondary">יצירת משתמש</button>
+      </div>
+      <div id="authMessage" class="message text-center"></div>
+    </section>
+
+    <section id="mainScreen" class="hidden">
+      <header class="topbar card glass">
+        <div class="brand">
+          <span class="brand-icon">🚀</span>
+          <div>
+            <h1>ATP SUFA</h1>
+            <div id="userBadge" class="muted user-badge">נטען...</div>
+          </div>
+        </div>
+        <div class="actions top-actions">
+          <button class="tab-btn active" data-tab="formTab">טופס בדיקה</button>
+          <button class="tab-btn hidden" data-tab="adminTab" id="adminTabBtn">ניהול מערכת</button>
+          <button id="logoutBtn" class="danger-lite">התנתקות</button>
+        </div>
+      </header>
+
+      <section id="bootstrapAdminBox" class="card glass warning-card hidden">
+        <div class="section-title-row">
+          <div>
+            <h2>הפעלת הרשאות Admin</h2>
+            <p class="muted">אם זה החשבון הראשון במערכת או שאתה פועל לבד, כדאי להפעיל הרשאות ניהול לחשבון זה.</p>
+          </div>
+          <div class="actions compact">
+            <button id="bootstrapAdminBtn" class="primary warning">הפעל תפקיד מנהל</button>
+          </div>
+        </div>
+        <div id="bootstrapAdminMessage" class="message"></div>
+      </section>
+
+      <section id="formTab" class="tab-pane fade-in">
+        <div class="card glass">
+          <div class="section-title-row title-with-actions">
+            <h2>פרטי בדיקה</h2>
+            <div class="actions compact">
+              <button id="newRecordBtn" class="secondary">טופס חדש</button>
+              <button id="loadDraftBtn" class="secondary">המשך טיוטה</button>
+              <button id="saveDraftBtn" class="secondary">שמירת ביניים (טיוטה)</button>
+              <button id="saveRecordBtn" class="primary save-glow">שמירה סופית</button>
+            </div>
+          </div>
+          <div class="grid three">
+            <label><span>שם הבודק *</span><input id="testerName" type="text" placeholder="לדוגמה: ישראל ישראלי" required/></label>
+            <label><span>תאריך בדיקה *</span><input id="testDate" type="date" required/></label>
+            <label><span>מיקום מנחת</span><input id="location" type="text" placeholder="לדוגמה: שדה דב" /></label>
+            <label><span>מזהה תחנה (ECTS/EGT)</span><input id="stationId" type="text" placeholder="לדוגמה: ST-01" /></label>
+            <label><span>מזהה פלטפורמה/רחפן *</span><input id="platformId" type="text" placeholder="לדוגמה: DR-99" required/></label>
+            <label><span>סוג מערכת *</span><select id="systemTypeSelect" required><option value="">טוען רשימה...</option></select></label>
+            <label class="span-3"><span>סיכום בדיקה / הערות כלליות</span><textarea id="generalNotes" rows="3" placeholder="הערות ותצפיות כלליות ממהלך הניסוי..."></textarea></label>
+          </div>
+          <div id="saveMessage" class="message"></div>
+        </div>
+        <div id="sectionsContainer" class="sections-grid"></div>
+      </section>
+
+      <section id="adminTab" class="tab-pane hidden fade-in">
+        <div class="card glass">
+          <h2>רשומות בדיקות שהושלמו / טיוטות</h2>
+          <div id="recordsAdminMessage" class="message"></div>
+          <div class="table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>רחפן</th>
+                  <th>סוג מערכת</th>
+                  <th>תאריך</th>
+                  <th>בודק</th>
+                  <th>סטטוס / תוצאה</th>
+                  <th>עודכן לאחרונה</th>
+                  <th>פעולות</th>
+                </tr>
+              </thead>
+              <tbody id="recordsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="grid admin-grid">
+          <div class="card glass" id="testsManagerCard">
+            <div class="section-title-row">
+              <h2>ניהול בדיקות מערכת</h2>
+              <button id="loadDefaultsBtn" class="secondary">טעינת בדיקות ברירת מחדל</button>
+            </div>
+            <div class="editor-pane">
+              <div class="grid two">
+                <label>
+                  <span>קטגוריה *</span>
+                  <select id="testSectionInput">
+                    <option value="טרום בדיקה">טרום בדיקה</option>
+                    <option value="טרום טיסה">טרום טיסה</option>
+                    <option value="טיסה">טיסה</option>
+                    <option value="בדיקות מקרי קצה">בדיקות מקרי קצה</option>
+                  </select>
+                </label>
+                <label><span>קוד בדיקה *</span><input id="testCodeInput" type="text" placeholder="לדוגמה: 2.1 או EC-1" required/></label>
+                <label><span>רכיב / סוג הציוד</span><input id="testEquipmentInput" type="text" placeholder="לדוגמה: רחפן / מטעד" /></label>
+                <label><span>כותרת הבדיקה *</span><input id="testTitleInput" type="text" placeholder="מהות הבדיקה..." required/></label>
+                <label class="span-2"><span>אופן ביצוע הבדיקה / מתודה</span><textarea id="testMethodInput" rows="3" placeholder="פרט כיצד לבצע את הבדיקה שלב אחר שלב..."></textarea></label>
+              </div>
+              <div class="actions inline-actions editor-actions">
+                <button id="saveTestBtn" class="primary">הוסף בדיקה למאגר</button>
+                <button id="clearTestEditorBtn" class="secondary">נקה טופס / בטל עריכה</button>
+              </div>
+              <div id="testsAdminMessage" class="message"></div>
+            </div>
+            <div id="testsAdminList" class="list admin-list-container"></div>
+          </div>
+
+          <div class="card glass">
+            <div class="section-title-row">
+              <h2>ניהול סוגי מערכות</h2>
+            </div>
+            <div class="inline-form">
+              <input id="newSystemTypeName" type="text" placeholder="שם המערכת החדשה (לדוגמה: SUFA)" />
+              <button id="saveSystemTypeBtn" class="primary">שמירה</button>
+            </div>
+            <div id="systemTypesMessage" class="message"></div>
+            <div id="systemTypesList" class="list admin-list-container"></div>
+          </div>
+        </div>
+      </section>
+    </section>
+  </div>
+
+  <div id="modalOverlay" class="modal-overlay hidden">
+    <div class="modal card glass-heavy">
+      <div class="section-title-row sticky-header">
+        <h3 id="modalTitle">תצוגת רשומה</h3>
+        <button id="closeModalBtn" class="secondary danger-lite">סגירה</button>
+      </div>
+      <div id="modalContent" class="modal-scroll-area"></div>
+    </div>
+  </div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
